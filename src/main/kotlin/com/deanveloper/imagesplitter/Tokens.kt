@@ -1,8 +1,10 @@
 package com.deanveloper.imagesplitter
 
+import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 import com.google.gson.JsonParser
+import java.awt.Desktop
 import java.io.File
 
 /**
@@ -54,7 +56,17 @@ object Tokens {
     }
 
     fun getViaOAuth() {
+        val state = Math.random().toString()
+        val desktop = Desktop.getDesktop()
+        desktop?.browse("https://api.imgur.com/oauth2/authorize".httpGet(
+                listOf(
+                        "client_id" to "e96bbfb9b380cc7",
+                        "response_type" to "pin",
+                        "state" to state
+                )
+        ).url.toURI())
         while (true) {
+            println("Please enter your pin")
             val pin = readLine()
             if (pin != null) {
                 val state = Math.random().toString()
@@ -69,7 +81,12 @@ object Tokens {
 
                 when (result) {
                     is Result.Success -> {
-                        val json = JsonParser().parse(result.value).asJsonObject
+                        val json = result.value.toJson().asJsonObject
+                        val unsuccessful = !(json["success"]?.asBoolean ?: true)
+                        if(unsuccessful) {
+                            println("Pin did not work.")
+                            tryAgainPrompt()
+                        }
                         val access = json["access_token"].asString
                         val refresh = json["refresh_token"].asString
 
@@ -78,7 +95,6 @@ object Tokens {
                     }
                     is Result.Failure -> {
                         println("Error: " + result.error.message)
-
                         tryAgainPrompt()
                     }
                 }

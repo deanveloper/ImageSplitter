@@ -1,6 +1,9 @@
 package com.deanveloper.imagesplitter
 
+import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.httpGet
+import com.google.gson.JsonElement
+import com.google.gson.JsonParser
 import java.awt.Desktop
 import java.awt.image.BufferedImage
 import java.io.File
@@ -11,6 +14,7 @@ import kotlin.system.exitProcess
 /**
  * @author Dean
  */
+val PARSER = JsonParser()
 
 fun main(args: Array<String>) {
     try {
@@ -42,16 +46,6 @@ fun main(args: Array<String>) {
         if (outputArg == "upload") {
 
             if (Tokens.load()) {
-                val state = Math.random().toString()
-                val desktop = Desktop.getDesktop()
-                desktop?.browse("https://api.imgur.com/oauth2/authorize".httpGet(
-                        listOf(
-                                "client_id" to "e96bbfb9b380cc7",
-                                "response_type" to "pin",
-                                "state" to state
-                        )
-                ).url.toURI())
-
                 Tokens.getViaOAuth()
                 Tokens.save()
             }
@@ -96,6 +90,10 @@ tailrec fun tryAgainPrompt() {
     println("Not a valid input!")
     tryAgainPrompt()
 }
+
+fun String.toJson() = PARSER.parse(this)
+
+fun Request.addToken() = this.header("Authorization" to "Bearer ${Tokens.access}")
 
 val whyNot: String
     get() {

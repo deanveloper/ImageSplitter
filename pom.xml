@@ -46,6 +46,11 @@
             <artifactId>gson</artifactId>
             <version>2.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-support-jdk8</artifactId>
+            <version>0.3</version>
+        </dependency>
     </dependencies>
 
     <build>
