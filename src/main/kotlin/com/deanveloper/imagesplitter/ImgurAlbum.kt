@@ -2,7 +2,6 @@ package com.deanveloper.imagesplitter
 
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
-import java.net.URL
 
 /**
  * @author Dean
@@ -18,7 +17,7 @@ class ImgurAlbum(val images: List<ImgurImage>) {
                 )
         ).addToken().responseString().third
 
-        when(result) {
+        when (result) {
             is Result.Success -> {
                 val json = result.value.toJson().asJsonObject
                 id = json["data"].asJsonObject["id"].asString
@@ -26,6 +25,18 @@ class ImgurAlbum(val images: List<ImgurImage>) {
             is Result.Failure -> {
                 throw UploadException(images.toString())
             }
+        }
+    }
+
+    fun publish(title: String, topic: String = "funny", mature: Boolean) {
+        while (true) {
+            "https://api.imgur.com/3/gallery/album/$id".httpPost(
+                    listOf(
+                            "title" to title,
+                            "topic" to topic,
+                            "mature" to if(mature) 1 else 0
+                            )
+            ).addToken()
         }
     }
 }
