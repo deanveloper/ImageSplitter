@@ -46,11 +46,11 @@ fun main(args: Array<String>) {
         }
     } catch (e: SyntaxException) {
         println(e.message)
-        println("Usage: java -jar ImageSplitter.jar <filename> <height> <outputFile|upload>")
+        println("Usage: java -jar ImageSplitterApp.jar <filename> <height> <outputFile|upload>")
         exitProcess(1)
     } catch (e: Throwable) {
         println("An exception occurred, send this to the developer at " +
-                "https://github.com/Deanveloper/ImageSplitter/issues")
+                "https://github.com/Deanveloper/ImageSplitterApp/issues")
 
         e.printStackTrace()
     }
